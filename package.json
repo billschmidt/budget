@@ -1,0 +1,16 @@
+{
+  "name": "budget",
+  "version": "1.0.0",
+  "description": "Budgeting tool for personal use",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/billschmidt/budget.git"
+  },
+  "author": "Bill Schmidt",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/billschmidt/budget/issues"
+  },
+  "homepage": "https://github.com/billschmidt/budget#readme"
+}

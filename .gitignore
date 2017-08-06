@@ -1,0 +1,13 @@
+.vagrant/
+
+# PhpStorm
+.idea/
+
+# composer
+vendor/
+
+# environment config
+vagrant.yml
+
+# node
+node_modules/

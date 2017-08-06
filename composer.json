@@ -1,0 +1,12 @@
+{
+    "name" : "Bill Budget",
+    "autoload": {
+        "psr-4": {
+            "BillBudget\\": "src/"
+        }
+    },
+    "require": {
+        "monolog/monolog" : "1.*",
+        "bramus/monolog-colored-line-formatter" : "~2.0"
+    }
+}

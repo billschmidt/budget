@@ -7,7 +7,7 @@
 vendor/
 
 # environment config
-vagrant.yml
+env.yml
 
 # node
 node_modules/

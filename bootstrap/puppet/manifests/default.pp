@@ -57,6 +57,7 @@ class { '::php':
         json     => { },
         pgsql    => { },
         mbstring => { },
+        yaml => { },
     },
 }
 
@@ -107,7 +108,7 @@ class { 'postgresql::server':
 
 postgresql::server::db { $db_name:
     user     => $db_name,
-    password => postgresql_password($db_name, 'vagrant'),
+    password => postgresql_password($db_name, $db_pass),
 }
 
 postgresql::server::extension { 'uuid-ossp':
@@ -118,12 +119,23 @@ postgresql::server::extension { 'uuid-ossp':
 #npm symlink
 class npm_symlink {
     exec { 'path':
-        command => '/bin/echo "export PATH=/usr/local/lib/node_modules/grunt-cli/bin:/usr/local/lib/node_modules/bower/bin:$PATH" >> /home/ubuntu/.bashrc',
+        command => '/bin/echo "export PATH=/usr/local/lib/node_modules/grunt-cli/bin:/home/ubuntu/node_modules/.bin:$PATH" >> /home/ubuntu/.bashrc',
     }
     file { 'node-symlink':
         path => "/usr/bin/node",
         target => "/usr/bin/nodejs",
         ensure => link,
+    }
+    # move the node_modules folder outside of the synced folder so that symlinks work
+    file { 'node-modules-folder':
+      path => "/home/ubuntu/node_modules",
+      ensure => directory,
+    }
+    file { 'node-modules-symlink':
+        path => "/home/ubuntu/node_modules",
+        target => "{$synced_folder}/node_modules",
+        ensure => link,
+        require => File['node-modules-folder']
     }
 }
 include npm_symlink

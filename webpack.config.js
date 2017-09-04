@@ -1,15 +1,30 @@
 var webpack = require('webpack');
 var path = require('path');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-var BUILD_DIR = path.resolve(__dirname, 'js/client/public');
-var APP_DIR = path.resolve(__dirname, 'js/client/app');
-
-var config = {
-    entry: APP_DIR + '/index.jsx',
+module.exports = {
+    entry: ['./app/app.js', './style/main.scss'],
+    devtool: 'source-map',
+    module: {
+        loaders: [
+            {
+                test: /\.js?$/,
+                loader: 'babel-loader',
+                exclude: /node_modules/
+            },
+            {
+                test: /\.scss$/,
+                loader: ExtractTextPlugin.extract('css-loader?sourceMap!sass-loader?sourceMap')
+            }
+        ]
+    },
     output: {
-        path: BUILD_DIR,
-        filename: 'bundle.js'
-    }
+        filename: "public/js/bundle.js"
+    },
+    plugins: [
+        new ExtractTextPlugin({
+            filename: 'public/css/styles.css',
+            allChunks: true
+        })
+    ]
 };
-
-module.exports = config;

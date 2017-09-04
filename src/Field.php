@@ -12,25 +12,29 @@ namespace BillBudget;
  * @package BillBudget
  */
 abstract class Field {
-    protected $name;
-    protected $readable_name;
-    protected $table;
+    public $name;
+    public $readable_name;
+    public $table;
     public $value;
     public $set;
-    protected $required;
+    public $visible;
+    public $required;
+    public $options;
 
     public function __construct($name, $readable_name, $table = '', $options = []) {
         $this->name = $name;
         $this->readable_name = $readable_name;
         $this->table = $table;
         $this->required = !empty($options['required']) ? $options['required'] : false;
+        $this->options = $options;
+        $this->visible = true;
     }
 
     /**
      * @return string
      */
     public function db_field() {
-        return '"' . $this->table . '".' . $this->name;
+        return '"' . $this->table . '"."' . $this->name . '"';
     }
 
     /**
@@ -56,4 +60,8 @@ abstract class Field {
      * @return string
      */
     abstract public function install_field();
+
+    public function filter() {
+
+    }
 }

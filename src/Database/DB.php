@@ -6,10 +6,13 @@
  */
 
 namespace BillBudget\Database;
+use BillBudget\Log\ServerLog;
+use Monolog\Logger;
 
 /**
  * Class DB
  * @package BillBudget\Database
+ * @method static string lastInsertId(string $sequence)
  */
 class DB {
     /** @var \PDO[] */

@@ -3,3 +3,5 @@ fqdn: placeholder.wrschmidt.com
 nginx_hosts: placeholder.wrschmidt.com
 fpm_socket: /var/run/php-fpm.placeholder.sock
 db_name: placeholder
+db_dsn: pgsql:dbname=placeholder;host=localhost;port=5432
+db_pass: vagrant

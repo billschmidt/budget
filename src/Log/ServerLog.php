@@ -167,4 +167,19 @@ class ServerLog {
         $handler = new RotatingFileHandler(PROJECT_PATH.'log/'.$log->getName().'.log', $days, $level);
         $log->pushHandler($handler);
     }
+
+    /**
+     * Make a nice array for formatting
+     *
+     * @param \Exception $ex
+     * @return array
+     */
+    public static function format_exception($ex) {
+        return [
+            'Message' => $ex->getMessage(),
+            'File' => $ex->getFile(),
+            'Line' => $ex->getLine(),
+            'Trace' => $ex->getTrace(),
+        ];
+    }
 }

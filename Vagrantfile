@@ -10,7 +10,7 @@ require 'yaml'
 dir = File.dirname(File.expand_path(__FILE__))
 
 # defaults
-settings = YAML::load_file("#{dir}/vagrant.yml")
+settings = YAML::load_file("#{dir}/env.yml")
 
 Vagrant.configure("2") do |config|
 
@@ -22,6 +22,7 @@ Vagrant.configure("2") do |config|
         v.memory = 4096
         v.cpus = 4
         v.name = settings['fqdn']
+        v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
     end
 
     # ssh settings

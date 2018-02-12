@@ -10,6 +10,8 @@ namespace BillBudget\Controller;
 
 use BillBudget\Base;
 use function BillBudget\data_classes;
+use BillBudget\Exceptions\InvalidField;
+use BillBudget\Exceptions\RecordNotFound;
 use function BillBudget\is_assoc;
 use BillBudget\Log\ServerLog;
 use Monolog\Logger;
@@ -254,14 +256,46 @@ class ApiController {
     }
 
     public function api_post() {
-        
+        /** @var Base $cn */
+        $cn = $this->path['class'];
+
+        try {
+            if (!empty($this->path['id'])) {
+                // update
+                /** @var Base $inst */
+                $inst = new $cn($this->path['id']);
+                $inst->update($this->request);
+                $this->respond(200, $inst, $cn::READABLE_NAME . ' updated.');
+            } else {
+                $obj = $cn::create($this->request);
+                $this->respond(201, $obj, $cn::READABLE_NAME . ' created.');
+            }
+        } catch (InvalidField $ex) {
+            $this->respond(500, 'Invalid Field: '.$ex->getMessage(), $cn::READABLE_NAME . ' updated.');
+        } catch (RecordNotFound $ex) {
+            $this->respond(404, 'Not Found: '.$ex->getMessage(), $cn::READABLE_NAME . ' updated.');
+        } catch (\Exception $ex) {
+            $this->respond(500, 'An error has occurred: '.$ex->getMessage(), $cn::READABLE_NAME . ' updated.');
+            ServerLog::log(ServerLog::CHANNEL_EXCEPTIONS, Logger::ERROR, ServerLog::format_exception($ex));
+        }
     }
 
     public function api_put() {
-        
+        // TODO: this
     }
 
     public function api_delete() {
+        /** @var Base $cn */
+        $cn = $this->path['class'];
 
+        try {
+            /** @var Base $inst */
+            $inst = new $cn($this->path['id']);
+            $inst->delete();
+            $this->respond(200, $inst, $cn::READABLE_NAME . ' deleted.');
+        } catch (\Exception $ex) {
+            $this->respond(500, 'An error has occurred: '.$ex->getMessage(), $cn::READABLE_NAME . ' updated.');
+            ServerLog::log(ServerLog::CHANNEL_EXCEPTIONS, Logger::ERROR, ServerLog::format_exception($ex));
+        }
     }
 }

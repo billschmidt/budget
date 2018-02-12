@@ -74,15 +74,9 @@ class ServerLog {
      * @param array $context
      * @param callable|null $callback
      * @param array $options
-     * @throws \Exception
      */
     public static function log($channel, $level, $message, $context = [], callable $callback = null, $options = []) {
         $log = self::get_instance($channel, $callback, $options);
-
-        if (!in_array($level, $log->getLevels())) {
-            throw new \Exception('Invalid log level: '.$level);
-        }
-
         $log->addRecord($level, $message, $context);
     }
 
@@ -102,6 +96,7 @@ class ServerLog {
      *
      * @param Logger $log
      * @param int $level
+     * @throws \Exception
      */
     private static function log_default(Logger $log, $level = Logger::DEBUG) {
         $handler = new StreamHandler(PROJECT_PATH.'log/'.$log->getName().'.log', $level);
@@ -112,6 +107,7 @@ class ServerLog {
      * Uses ColoredLineFormatter for pretty CLI logs
      *
      * @param Logger $log
+     * @throws \Exception
      */
     private static function log_cli(Logger $log) {
         static::output_cli($log, "[%datetime%] %level_name%: %message%\n");
@@ -122,6 +118,7 @@ class ServerLog {
      *
      * @param Logger $log
      * @param int $width
+     * @throws \Exception
      */
     private static function log_cli_header(Logger $log, $width) {
         static::log_cli_line_break($log, $width, "\n");
@@ -135,6 +132,7 @@ class ServerLog {
      * @param Logger $log
      * @param int $width
      * @param string $prefix
+     * @throws \Exception
      */
     private static function log_cli_line_break(Logger $log, $width, $prefix = '') {
         $output = '';
@@ -151,6 +149,7 @@ class ServerLog {
      *
      * @param Logger $log
      * @param $output
+     * @throws \Exception
      */
     private static function output_cli(Logger $log, $output) {
         $handler = new StreamHandler('php://stdout');

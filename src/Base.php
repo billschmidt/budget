@@ -12,11 +12,13 @@ use BillBudget\Database\Query;
 use BillBudget\Exceptions\InsertError;
 use BillBudget\Exceptions\InvalidField;
 use BillBudget\Exceptions\RecordNotFound;
+use BillBudget\Fields\ForeignKeyField;
 use BillBudget\Fields\PrimaryKeyField;
 
 /**
  * Class Base
  * @package BillBudget
+ * @property int $id
  */
 abstract class Base implements \JsonSerializable {
     const CLASS_KEY = 'base';
@@ -45,6 +47,13 @@ abstract class Base implements \JsonSerializable {
         ];
     }
 
+    /**
+     * Base constructor.
+     * @param $data
+     * @param array $options
+     * @throws RecordNotFound
+     * @throws \Exception
+     */
     public function __construct($data, $options = []) {
         $this->_fields = static::get_fields();
 
@@ -83,6 +92,11 @@ abstract class Base implements \JsonSerializable {
         }
     }
 
+    /**
+     * @param $values
+     * @param array $options
+     * @throws InsertError
+     */
     public static function create($values, $options = []) {
         $fields = static::get_fields();
 
@@ -136,6 +150,8 @@ abstract class Base implements \JsonSerializable {
      * @param array $options
      * @param array $pagination
      * @return Base[]
+     * @throws RecordNotFound
+     * @throws \Exception
      */
     public static function select($filter, $options = [], &$pagination = []) {
         $order = isset($options['order']) ? $options['order'] : [];
@@ -252,6 +268,10 @@ abstract class Base implements \JsonSerializable {
         // get a field value
         if (isset($this->_fields[$name])) {
             return $this->_fields[$name]->get_value();
+        } else if ($this->foreign_key_exists($name)) {
+            $value = $this->_fields[$name . '_id']->get_value();
+            $cn = $this->_fields[$name]->options['class_reference'];
+            return new $cn($value);
         } else {
             throw new InvalidField("Can't get field: $name");
         }
@@ -304,6 +324,16 @@ abstract class Base implements \JsonSerializable {
         }
 
         return $json;
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    private function foreign_key_exists($name) {
+        $field_name = $name . '_id';
+
+        return array_key_exists($field_name, $this->_fields) && $this->_fields[$field_name] instanceof ForeignKeyField;
     }
 
 }
